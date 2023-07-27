@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import {
   unstable_useForkRef as useForkRef,
@@ -15,11 +16,11 @@ import MuiCancellableEvent from '../utils/muiCancellableEvent';
  *
  * Demos:
  *
- * - [Button](https://mui.com/base/react-button/#hook)
+ * - [Button](https://mui.com/base-ui/react-button/#hook)
  *
  * API:
  *
- * - [useButton API](https://mui.com/base/react-button/hooks-api/#use-button)
+ * - [useButton API](https://mui.com/base-ui/react-button/hooks-api/#use-button)
  */
 export default function useButton(parameters: UseButtonParameters = {}): UseButtonReturnValue {
   const {

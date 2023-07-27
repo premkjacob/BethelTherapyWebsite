@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import { unstable_useForkRef as useForkRef } from '@mui/utils';
 import {
@@ -83,6 +84,7 @@ function useList<
     getItemAsString = defaultItemStringifier,
     onChange,
     onHighlightChange,
+    onItemsChange,
     orientation = 'vertical',
     pageSize = 5,
     reducerActionContext = EMPTY_OBJECT as CustomActionContext,
@@ -251,7 +253,8 @@ function useList<
     });
 
     previousItems.current = items;
-  }, [items, itemComparer, dispatch]);
+    onItemsChange?.(items);
+  }, [items, itemComparer, dispatch, onItemsChange]);
 
   // Subitems are notified of changes to the highlighted and selected values.
   // This is not done via context because we don't want to trigger a re-render of all the subitems each time any of them changes state.

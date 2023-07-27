@@ -2,23 +2,6 @@ import * as React from 'react';
 import { EventHandlers } from '../utils/types';
 import { MuiCancellableEventHandler } from '../utils/muiCancellableEvent';
 
-export interface UseButtonRootSlotOwnProps {
-  'aria-disabled'?: React.AriaAttributes['aria-disabled'];
-  disabled?: boolean;
-  tabIndex?: number;
-  type?: React.ButtonHTMLAttributes<HTMLButtonElement>['type'];
-  role?: React.AriaRole;
-  onBlur: React.FocusEventHandler;
-  onFocus: React.FocusEventHandler;
-  onKeyDown: MuiCancellableEventHandler<React.KeyboardEvent>;
-  onKeyUp: MuiCancellableEventHandler<React.KeyboardEvent>;
-  onMouseDown: React.MouseEventHandler;
-  onMouseLeave: React.MouseEventHandler;
-  ref: React.RefCallback<Element> | null;
-}
-
-export type UseButtonRootSlotProps<TOther = {}> = TOther & UseButtonRootSlotOwnProps;
-
 export interface UseButtonParameters {
   /**
    * If `true`, the component is disabled.
@@ -42,6 +25,23 @@ export interface UseButtonParameters {
   type?: React.ButtonHTMLAttributes<HTMLButtonElement>['type'];
 }
 
+export interface UseButtonRootSlotOwnProps {
+  'aria-disabled'?: React.AriaAttributes['aria-disabled'];
+  disabled?: boolean;
+  tabIndex?: number;
+  type?: React.ButtonHTMLAttributes<HTMLButtonElement>['type'];
+  role?: React.AriaRole;
+  onBlur: React.FocusEventHandler;
+  onFocus: React.FocusEventHandler;
+  onKeyDown: MuiCancellableEventHandler<React.KeyboardEvent>;
+  onKeyUp: MuiCancellableEventHandler<React.KeyboardEvent>;
+  onMouseDown: React.MouseEventHandler;
+  onMouseLeave: React.MouseEventHandler;
+  ref: React.RefCallback<Element> | null;
+}
+
+export type UseButtonRootSlotProps<TOther = {}> = TOther & UseButtonRootSlotOwnProps;
+
 export interface UseButtonReturnValue {
   /**
    * Resolver for the root slot's props.
@@ -53,7 +53,6 @@ export interface UseButtonReturnValue {
   ) => UseButtonRootSlotProps<TOther>;
   /**
    * If `true`, the component is being focused using keyboard.
-   * @default false
    */
   focusVisible: boolean;
   /**
@@ -62,7 +61,6 @@ export interface UseButtonReturnValue {
   setFocusVisible: React.Dispatch<React.SetStateAction<boolean>>;
   /**
    * If `true`, the component is active (pressed).
-   * @default false
    */
   active: boolean;
   /**

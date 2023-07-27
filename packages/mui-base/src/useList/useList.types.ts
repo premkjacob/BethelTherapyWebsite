@@ -136,7 +136,7 @@ export interface UseListParameters<
    */
   isItemDisabled?: (itemValue: ItemValue, index: number) => boolean;
   /**
-   * Ref of the list root DOM element.
+   * Ref to the list root DOM element.
    */
   rootRef?: React.Ref<Element>;
   /**
@@ -157,6 +157,12 @@ export interface UseListParameters<
     option: ItemValue | null,
     reason: string,
   ) => void;
+  /**
+   * Callback fired when the items change.
+   *
+   * @param items The new items collection
+   */
+  onItemsChange?: (items: ItemValue[]) => void;
   /**
    * Callback fired when the any of the state items change.
    * Note that in case of `selectedValues` and `highlightedValue` the strongly typed

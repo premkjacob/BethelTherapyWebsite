@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
@@ -23,6 +24,7 @@ import useThemeProps from '../styles/useThemeProps';
 import styled from '../styles/styled';
 import autocompleteClasses, { getAutocompleteUtilityClass } from './autocompleteClasses';
 import capitalize from '../utils/capitalize';
+import useForkRef from '../utils/useForkRef';
 
 const useUtilityClasses = (ownerState) => {
   const {
@@ -473,6 +475,10 @@ const Autocomplete = React.forwardRef(function Autocomplete(inProps, ref) {
   const hasPopupIcon = (!freeSolo || forcePopupIcon === true) && forcePopupIcon !== false;
 
   const { onMouseDown: handleInputMouseDown } = getInputProps();
+  const { ref: externalListboxRef } = ListboxProps ?? {};
+  const { ref: listboxRef, ...otherListboxProps } = getListboxProps();
+
+  const combinedListboxRef = useForkRef(listboxRef, externalListboxRef);
 
   // If you modify this, make sure to keep the `AutocompleteOwnerState` type in sync.
   const ownerState = {
@@ -547,11 +553,16 @@ const Autocomplete = React.forwardRef(function Autocomplete(inProps, ref) {
   const renderListOption = (option, index) => {
     const optionProps = getOptionProps({ option, index });
 
-    return renderOption({ ...optionProps, className: classes.option }, option, {
-      selected: optionProps['aria-selected'],
-      index,
-      inputValue,
-    });
+    return renderOption(
+      { ...optionProps, className: classes.option },
+      option,
+      {
+        selected: optionProps['aria-selected'],
+        index,
+        inputValue,
+      },
+      ownerState,
+    );
   };
 
   const clearIndicatorSlotProps = slotProps.clearIndicator ?? componentsProps.clearIndicator;
@@ -666,8 +677,9 @@ const Autocomplete = React.forwardRef(function Autocomplete(inProps, ref) {
                 as={ListboxComponent}
                 className={classes.listbox}
                 ownerState={ownerState}
-                {...getListboxProps()}
+                {...otherListboxProps}
                 {...ListboxProps}
+                ref={combinedListboxRef}
               >
                 {groupedOptions.map((option, index) => {
                   if (groupBy) {
@@ -1057,15 +1069,16 @@ Autocomplete.propTypes /* remove-proptypes */ = {
    * Render the option, use `getOptionLabel` by default.
    *
    * @param {object} props The props to apply on the li element.
-   * @param {T} option The option to render.
-   * @param {object} state The state of the component.
+   * @param {Value} option The option to render.
+   * @param {object} state The state of each option.
+   * @param {object} ownerState The state of the Autocomplete component.
    * @returns {ReactNode}
    */
   renderOption: PropTypes.func,
   /**
    * Render the selected value.
    *
-   * @param {T[]} value The `value` provided to the component.
+   * @param {Value[]} value The `value` provided to the component.
    * @param {function} getTagProps A tag props getter.
    * @param {object} ownerState The state of the Autocomplete component.
    * @returns {ReactNode}
