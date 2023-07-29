@@ -1,5 +1,6 @@
 'use client';
 import * as React from 'react';
+import { ScrollableTabsContext, useScrollableTabsContext } from '@mui/base/ScrollableTabs';
 import { useTabsContext } from '../Tabs';
 import {
   TabsListActionTypes,
@@ -26,6 +27,31 @@ import tabsListReducer from './tabsListReducer';
  */
 function useTabsList(parameters: UseTabsListParameters): UseTabsListReturnValue {
   const { rootRef: externalRef } = parameters;
+
+  const scrollableTabsContext = useScrollableTabsContext();
+
+  const scrollableTabsListProps = scrollableTabsContext && {
+    ref: scrollableTabsContext.tabListRef,
+    style: {
+      overflowX: 'hidden',
+      width: '100%',
+      ...(scrollableTabsContext.hideScrollbar && {
+        // Hide dimensionless scrollbar on macOS
+        scrollbarWidth: 'none', // Firefox
+        '&::WebkitScrollbar': {
+          display: 'none', // Safari + Chrome
+        },
+      }),
+      ...(scrollableTabsContext.scrollableX && {
+        overflowX: 'auto',
+        overflowY: 'hidden',
+      }),
+      ...(scrollableTabsContext.scrollableY && {
+        overflowY: 'auto',
+        overflowX: 'hidden',
+      }),
+    },
+  };
 
   const {
     direction = 'ltr',
@@ -148,6 +174,8 @@ function useTabsList(parameters: UseTabsListParameters): UseTabsListReturnValue 
     return {
       ...otherHandlers,
       ...getListboxRootProps(otherHandlers),
+      // TODO -> figure out how to do this better (shouldn't overwrite original ref)
+      ...scrollableTabsListProps,
       'aria-orientation': orientation === 'vertical' ? 'vertical' : undefined,
       role: 'tablist',
     };
