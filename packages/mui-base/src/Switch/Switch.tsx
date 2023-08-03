@@ -55,6 +55,7 @@ const Switch = React.forwardRef(function Switch<RootComponentType extends React.
     checked: checkedProp,
     defaultChecked,
     disabled: disabledProp,
+    name,
     onBlur,
     onChange,
     onFocus,
@@ -77,7 +78,8 @@ const Switch = React.forwardRef(function Switch<RootComponentType extends React.
     readOnly: readOnlyProp,
   };
 
-  const { getInputProps, checked, disabled, focusVisible, readOnly } = useSwitch(useSwitchProps);
+  const { getRootProps, getInputProps, checked, disabled, focusVisible, readOnly } =
+    useSwitch(useSwitchProps);
 
   const ownerState: SwitchOwnerState = {
     ...props,
@@ -90,13 +92,19 @@ const Switch = React.forwardRef(function Switch<RootComponentType extends React.
   const classes = useUtilityClasses(ownerState);
 
   const Root: React.ElementType = slots.root ?? 'span';
+
   const rootProps: WithOptionalOwnerState<SwitchRootSlotProps> = useSlotProps({
     elementType: Root,
     externalSlotProps: slotProps.root,
     externalForwardedProps: other,
     additionalProps: {
+      tabIndex: disabled ? null : 0,
+      style: {
+        outline: 'none',
+      },
       ref: forwardedRef,
     },
+    getSlotProps: getRootProps,
     ownerState,
     className: classes.root,
   });
@@ -112,8 +120,11 @@ const Switch = React.forwardRef(function Switch<RootComponentType extends React.
   const Input: React.ElementType = slots.input ?? 'input';
   const inputProps: WithOptionalOwnerState<SwitchInputSlotProps> = useSlotProps({
     elementType: Input,
-    getSlotProps: getInputProps,
     externalSlotProps: slotProps.input,
+    additionalProps: {
+      name,
+    },
+    getSlotProps: getInputProps,
     ownerState,
     className: classes.input,
   });
@@ -152,6 +163,10 @@ Switch.propTypes /* remove-proptypes */ = {
    * If `true`, the component is disabled.
    */
   disabled: PropTypes.bool,
+  /**
+   * Name attribute of the `input` element.
+   */
+  name: PropTypes.string,
   /**
    * @ignore
    */

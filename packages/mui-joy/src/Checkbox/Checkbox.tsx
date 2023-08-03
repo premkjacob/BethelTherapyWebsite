@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { OverridableComponent } from '@mui/types';
 import { unstable_useId as useId, unstable_capitalize as capitalize } from '@mui/utils';
 import { unstable_composeClasses as composeClasses } from '@mui/base';
-import useSwitch from '@mui/base/useSwitch';
+import useSwitch from '@mui/base/useSwitch/temporaryUseSwitch';
 import { styled, useThemeProps } from '../styles';
 import { useColorInversion } from '../styles/ColorInversion';
 import useSlot from '../utils/useSlot';
@@ -336,7 +336,7 @@ const Checkbox = React.forwardRef(function Checkbox(inProps, ref) {
     className: classes.input,
     elementType: CheckboxInput,
     externalForwardedProps,
-    getSlotProps: getInputProps,
+    getSlotProps: () => getInputProps({ hidden: false }),
     ownerState,
   });
 

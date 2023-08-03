@@ -54,13 +54,15 @@ describe('useSwitch', () => {
 
       expect(inputProps!.checked).to.equal(true);
     });
+  });
 
+  describe('getRootProps', () => {
     it('should call onChange if a change event is fired', () => {
       const handleChange = spy();
       function Switch() {
-        const { getInputProps } = useSwitch({ onChange: handleChange });
+        const { getRootProps } = useSwitch({ onChange: handleChange });
 
-        return <input {...getInputProps()} />;
+        return <input {...getRootProps()} />;
       }
       render(<Switch />);
 
@@ -76,13 +78,13 @@ describe('useSwitch', () => {
       const handleFocus = spy();
       const handleFocusVisible = spy();
       function Switch() {
-        const { getInputProps } = useSwitch({
+        const { getRootProps } = useSwitch({
           onBlur: handleBlur,
           onFocus: handleFocus,
           onFocusVisible: handleFocusVisible,
         });
 
-        return <input {...getInputProps()} />;
+        return <span tabIndex={1} {...getRootProps()} />;
       }
       render(<Switch />);
       const checkbox = screen.getByRole('checkbox');
