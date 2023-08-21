@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { expect } from 'chai';
 import { spy, stub } from 'sinon';
+import { ClassNames } from '@emotion/react';
 import {
   describeConformance,
   ErrorBoundary,
@@ -1641,5 +1642,29 @@ describe('<Select />', () => {
     fireEvent.click(getByTestId('test-element'));
 
     expect(getByRole('button')).not.toHaveFocus();
+  });
+
+  describe('Emotion compatibility', () => {
+    it('classes.select should overwrite built-in styles.', () => {
+      // This is pink
+      const color = 'rgb(255, 192, 204)';
+
+      const { getByTestId } = render(
+        <ClassNames>
+          {({ css }) => (
+            <Select
+              data-testid="root"
+              value={'0'}
+              classes={{ select: css({ backgroundColor: color }) }}
+            >
+              <MenuItem value={'0'}>This is the text of the menu item</MenuItem>
+            </Select>
+          )}
+        </ClassNames>,
+      );
+      const root = getByTestId('root');
+
+      expect(getComputedStyle(root).backgroundColor).to.equal(color);
+    });
   });
 });
