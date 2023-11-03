@@ -7,6 +7,7 @@ import {
   CSSObject,
   SxConfig,
 } from '@mui/system';
+import { CircularProgressCssVarsType } from '@mui/joy/CircularProgress/CircularProgressCssVars';
 import { DefaultColorScheme, ExtendedColorScheme } from './colorScheme';
 import { ColorSystem } from './colorSystem';
 import { Focus } from './focus';
@@ -120,6 +121,8 @@ export interface Theme extends ThemeScales, RuntimeColorSystem {
   unstable_sx: (props: SxProps) => CSSObject;
 }
 
-export type SxProps = SystemSxProps<Theme>;
+export type CssVarsType = CircularProgressCssVarsType;
+
+export type SxProps = SystemSxProps<Theme> & CssVarsType;
 
 export type SystemProps = SystemSystemProps<Theme>;

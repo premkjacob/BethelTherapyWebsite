@@ -15,6 +15,7 @@ import {
   CircularProgressProps,
   CircularProgressTypeMap,
 } from './CircularProgressProps';
+import circularProgressCssVars from './CircularProgressCssVars';
 
 const circulate = keyframes({
   '0%': {
@@ -46,7 +47,9 @@ const useUtilityClasses = (ownerState: CircularProgressOwnerState) => {
 };
 
 function getThickness(slot: 'track' | 'progress', defaultValue: string) {
-  return `var(--CircularProgress-${slot}Thickness, var(--CircularProgress-thickness, ${defaultValue}))`;
+  return `var(${circularProgressCssVars[`${slot}Thickness`]}, var(${
+    circularProgressCssVars.thickness
+  }, ${defaultValue}))`;
 }
 
 const CircularProgressRoot = styled('span', {
@@ -60,33 +63,33 @@ const CircularProgressRoot = styled('span', {
     // integration with icon
     '--Icon-fontSize': 'calc(0.4 * var(--_root-size))',
     // public variables
-    '--CircularProgress-trackColor': backgroundColor,
-    '--CircularProgress-progressColor': color,
-    '--CircularProgress-percent': ownerState.value, // 0 - 100
-    '--CircularProgress-linecap': 'round',
+    [circularProgressCssVars.trackColor]: backgroundColor,
+    [circularProgressCssVars.progressColor]: color,
+    [circularProgressCssVars.percent]: ownerState.value, // 0 - 100
+    [circularProgressCssVars.linecap]: 'round',
     ...(ownerState.size === 'sm' && {
-      '--_root-size': 'var(--CircularProgress-size, 24px)', // use --_root-size to let other components overrides via --CircularProgress-size
+      '--_root-size': `var(${circularProgressCssVars.size}, 24px)`, // use --_root-size to let other components overrides via --CircularProgress-size
       '--_track-thickness': getThickness('track', '3px'),
       '--_progress-thickness': getThickness('progress', '3px'),
     }),
     ...(ownerState.instanceSize === 'sm' && {
-      '--CircularProgress-size': '24px',
+      [circularProgressCssVars.size]: '24px',
     }),
     ...(ownerState.size === 'md' && {
       '--_track-thickness': getThickness('track', '6px'),
       '--_progress-thickness': getThickness('progress', '6px'),
-      '--_root-size': 'var(--CircularProgress-size, 40px)',
+      '--_root-size': `var(${circularProgressCssVars.size}, 40px)`,
     }),
     ...(ownerState.instanceSize === 'md' && {
-      '--CircularProgress-size': '40px',
+      [circularProgressCssVars.size]: '40px',
     }),
     ...(ownerState.size === 'lg' && {
       '--_track-thickness': getThickness('track', '8px'),
       '--_progress-thickness': getThickness('progress', '8px'),
-      '--_root-size': 'var(--CircularProgress-size, 64px)',
+      '--_root-size': `var(${circularProgressCssVars.size}, 64px)`,
     }),
     ...(ownerState.instanceSize === 'lg' && {
-      '--CircularProgress-size': '64px',
+      [circularProgressCssVars.size]: '64px',
     }),
     ...(ownerState.thickness && {
       '--_track-thickness': `${ownerState.thickness}px`,
@@ -99,7 +102,7 @@ const CircularProgressRoot = styled('span', {
     width: 'var(--_root-size)',
     height: 'var(--_root-size)',
     borderRadius: 'var(--_root-size)',
-    margin: 'var(--CircularProgress-margin)',
+    margin: `var(${circularProgressCssVars.margin})`,
     boxSizing: 'border-box',
     display: 'inline-flex',
     justifyContent: 'center',
@@ -164,7 +167,7 @@ const CircularProgressTrack = styled('circle', {
   r: 'calc(var(--_inner-size) / 2 - var(--_track-thickness) / 2 + min(0px, var(--_thickness-diff) / 2))',
   fill: 'transparent',
   strokeWidth: 'var(--_track-thickness)',
-  stroke: 'var(--CircularProgress-trackColor)',
+  stroke: `var(${circularProgressCssVars.trackColor})`,
 });
 
 const CircularProgressProgress = styled('circle', {
@@ -181,18 +184,20 @@ const CircularProgressProgress = styled('circle', {
     r: 'var(--_progress-radius)',
     fill: 'transparent',
     strokeWidth: 'var(--_progress-thickness)',
-    stroke: 'var(--CircularProgress-progressColor)',
-    strokeLinecap: 'var(--CircularProgress-linecap, round)' as 'round', // can't use CSS variable directly, need to cast type.
+    stroke: `var(${circularProgressCssVars.progressColor})`,
+    strokeLinecap: `var(${circularProgressCssVars.linecap}, round)` as 'round', // can't use CSS variable directly, need to cast type.
     strokeDasharray: 'var(--_progress-length)',
-    strokeDashoffset:
-      'calc(var(--_progress-length) - var(--CircularProgress-percent) * var(--_progress-length) / 100)',
+    strokeDashoffset: `calc(var(--_progress-length) - var(${circularProgressCssVars.percent}) * var(--_progress-length) / 100)`,
     transformOrigin: 'center',
     transform: 'rotate(-90deg)', // to initially appear at the top-center of the circle.
   },
   ({ ownerState }) =>
     !ownerState.determinate &&
     css`
-      animation: var(--CircularProgress-circulation, 0.8s linear 0s infinite normal none running)
+      animation: var(
+          ${circularProgressCssVars.circulation},
+          0.8s linear 0s infinite normal none running
+        )
         ${circulate};
     `,
 );
@@ -259,7 +264,7 @@ const CircularProgress = React.forwardRef(function CircularProgress(inProps, ref
         // Setting this CSS variable via inline-style
         // prevents the generation of new CSS every time
         // `value` prop updates
-        '--CircularProgress-percent': value,
+        [circularProgressCssVars.percent]: value,
       },
       ...(value &&
         determinate && {
