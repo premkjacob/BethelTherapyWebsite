@@ -19,6 +19,7 @@ import {
   createNumericType,
   createObjectType,
   createStringType,
+  createReactRefType,
 } from './createType';
 import { PropTypeDefinition, PropTypesComponent, PropType } from './models';
 
@@ -290,6 +291,23 @@ function checkSymbol({
     ts.isTypeReferenceNode(declaration.type)
   ) {
     const name = declaration.type.typeName.getText();
+
+    if (name === 'React.Ref') {
+      return {
+        $$id: project.createPropTypeId(symbol),
+        name: symbol.getName(),
+        jsDoc,
+        filenames: symbolFilenames,
+        propType: createUnionType({
+          jsDoc,
+          types: [
+            createUndefinedType({ jsDoc: undefined }),
+            createReactRefType({ jsDoc: undefined }),
+          ],
+        }),
+      };
+    }
+
     if (
       name === 'React.ElementType' ||
       name === 'React.JSXElementConstructor' ||
