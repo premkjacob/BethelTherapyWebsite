@@ -5,8 +5,46 @@ import { PaperProps } from '../Paper';
 import { ModalProps } from '../Modal';
 import { TransitionProps } from '../transitions/transition';
 import { DialogClasses } from './dialogClasses';
+import { CreateSlotsAndSlotProps, SlotProps } from '../utils/types';
 
-export interface DialogProps extends StandardProps<ModalProps, 'children'> {
+export interface DialogSlots {
+  /**
+   * The component that renders the transition.
+   * [Follow this guide](/material-ui/transitions/#transitioncomponent-prop) to learn more about the requirements for this component.
+   * @default Collapse
+   */
+  transition?: React.JSXElementConstructor<
+    TransitionProps & { children?: React.ReactElement<any, any> }
+  >;
+  /**
+   * The component used to render the body of the dialog.
+   * @default Paper
+   */
+  paper?: React.JSXElementConstructor<PaperProps>;
+}
+
+export interface DialogTransitionSlotPropsOverrides {}
+export interface DialogPaperSlotPropsOverrides {}
+
+export type DialogSlotsAndSlotProps = CreateSlotsAndSlotProps<
+  DialogSlots,
+  {
+    transition: SlotProps<
+      React.ElementType<TransitionProps>,
+      DialogTransitionSlotPropsOverrides,
+      DialogOwnerState
+    >;
+    paper: SlotProps<
+      React.ElementType<PaperProps>,
+      DialogPaperSlotPropsOverrides,
+      DialogOwnerState
+    >;
+  }
+>;
+
+export interface DialogProps
+  extends Omit<StandardProps<ModalProps, 'children'>, 'slots' | 'slotProps'>,
+    DialogSlotsAndSlotProps {
   /**
    * The id(s) of the element(s) that describe the dialog.
    */
@@ -66,11 +104,13 @@ export interface DialogProps extends StandardProps<ModalProps, 'children'> {
   /**
    * The component used to render the body of the dialog.
    * @default Paper
+   * @deprecated Use `slots.paper` instead. This prop will be removed in v7.
    */
   PaperComponent?: React.JSXElementConstructor<PaperProps>;
   /**
    * Props applied to the [`Paper`](/material-ui/api/paper/) element.
    * @default {}
+   * @deprecated Use `slotProps.paper` instead. This prop will be removed in v7.
    */
   PaperProps?: Partial<PaperProps<React.ElementType>>;
   /**
@@ -86,6 +126,7 @@ export interface DialogProps extends StandardProps<ModalProps, 'children'> {
    * The component used for the transition.
    * [Follow this guide](/material-ui/transitions/#transitioncomponent-prop) to learn more about the requirements for this component.
    * @default Fade
+   * @deprecated Use `slots.transition` instead. This prop will be removed in v7.
    */
   TransitionComponent?: React.JSXElementConstructor<
     TransitionProps & { children: React.ReactElement<any, any> }
@@ -97,14 +138,18 @@ export interface DialogProps extends StandardProps<ModalProps, 'children'> {
    *   enter: theme.transitions.duration.enteringScreen,
    *   exit: theme.transitions.duration.leavingScreen,
    * }
+   * @deprecated Use `slotProps.transition.timeout` instead. This prop will be removed in v7.
    */
   transitionDuration?: TransitionProps['timeout'];
   /**
    * Props applied to the transition element.
    * By default, the element is based on this [`Transition`](http://reactcommunity.org/react-transition-group/transition/) component.
+   * @deprecated Use `slotProps.transition` instead. This prop will be removed in v7.
    */
   TransitionProps?: TransitionProps;
 }
+
+export interface DialogOwnerState extends DialogProps {}
 
 /**
  * Dialogs are overlaid modal paper based components with a backdrop.

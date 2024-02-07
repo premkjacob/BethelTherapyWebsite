@@ -14,6 +14,7 @@ import dialogClasses, { getDialogUtilityClass } from './dialogClasses';
 import DialogContext from './DialogContext';
 import Backdrop from '../Backdrop';
 import useTheme from '../styles/useTheme';
+import useSlot from '../utils/useSlot';
 
 const DialogBackdrop = styled(Backdrop, {
   name: 'MuiDialog',
@@ -184,12 +185,14 @@ const Dialog = React.forwardRef(function Dialog(inProps, ref) {
     onBackdropClick,
     onClose,
     open,
-    PaperComponent = Paper,
-    PaperProps = {},
+    PaperComponent: PaperComponentProp = Paper,
+    PaperProps: PaperPropsProp = {},
     scroll = 'paper',
-    TransitionComponent = Fade,
-    transitionDuration = defaultTransitionDuration,
-    TransitionProps,
+    slots = {},
+    slotProps = {},
+    TransitionComponent: TransitionComponentProp = Fade,
+    transitionDuration: transitionDurationProp = defaultTransitionDuration,
+    TransitionProps: TransitionPropsProp,
     ...other
   } = props;
 
@@ -232,6 +235,40 @@ const Dialog = React.forwardRef(function Dialog(inProps, ref) {
     return { titleId: ariaLabelledby };
   }, [ariaLabelledby]);
 
+  const backwardCompatibleSlots = {
+    transition: TransitionComponentProp,
+    paper: PaperComponentProp,
+    ...slots,
+  };
+  const backwardCompatibleSlotProps = {
+    transition: {
+      ...TransitionPropsProp,
+      timeout: slotProps.transition?.timeout || transitionDurationProp,
+    },
+    paper: PaperPropsProp,
+    ...slotProps,
+  };
+
+  const [TransitionSlot, transitionProps] = useSlot('transition', {
+    elementType: TransitionComponentProp,
+    externalForwardedProps: {
+      slots: backwardCompatibleSlots,
+      slotProps: backwardCompatibleSlotProps,
+    },
+    ownerState,
+  });
+
+  delete transitionProps.ownerState;
+
+  const [PaperSlot, paperProps] = useSlot('paper', {
+    elementType: DialogPaper,
+    externalForwardedProps: {
+      slots: backwardCompatibleSlots,
+      slotProps: backwardCompatibleSlotProps,
+    },
+    ownerState,
+  });
+
   return (
     <DialogRoot
       className={clsx(classes.root, className)}
@@ -239,7 +276,7 @@ const Dialog = React.forwardRef(function Dialog(inProps, ref) {
       components={{ Backdrop: DialogBackdrop }}
       componentsProps={{
         backdrop: {
-          transitionDuration,
+          transitionDuration: transitionProps.timeout,
           as: BackdropComponent,
           ...BackdropProps,
         },
@@ -252,12 +289,12 @@ const Dialog = React.forwardRef(function Dialog(inProps, ref) {
       ownerState={ownerState}
       {...other}
     >
-      <TransitionComponent
+      <TransitionSlot
         appear
         in={open}
-        timeout={transitionDuration}
+        timeout={transitionProps.timeout}
         role="presentation"
-        {...TransitionProps}
+        {...transitionProps}
       >
         {/* roles are applied via cloneElement from TransitionComponent */}
         {/* roles needs to be applied on the immediate child of Modal or it'll inject one */}
@@ -266,20 +303,19 @@ const Dialog = React.forwardRef(function Dialog(inProps, ref) {
           onMouseDown={handleMouseDown}
           ownerState={ownerState}
         >
-          <DialogPaper
-            as={PaperComponent}
+          <PaperSlot
+            as={PaperComponentProp}
             elevation={24}
             role="dialog"
             aria-describedby={ariaDescribedby}
             aria-labelledby={ariaLabelledby}
-            {...PaperProps}
-            className={clsx(classes.paper, PaperProps.className)}
-            ownerState={ownerState}
+            {...paperProps}
+            className={clsx(classes.paper, paperProps.className)}
           >
             <DialogContext.Provider value={dialogContextValue}>{children}</DialogContext.Provider>
-          </DialogPaper>
+          </PaperSlot>
         </DialogContainer>
-      </TransitionComponent>
+      </TransitionSlot>
     </DialogRoot>
   );
 });
@@ -374,11 +410,13 @@ Dialog.propTypes /* remove-proptypes */ = {
   /**
    * The component used to render the body of the dialog.
    * @default Paper
+   * @deprecated Use `slots.paper` instead. This prop will be removed in v7.
    */
   PaperComponent: PropTypes.elementType,
   /**
    * Props applied to the [`Paper`](/material-ui/api/paper/) element.
    * @default {}
+   * @deprecated Use `slotProps.paper` instead. This prop will be removed in v7.
    */
   PaperProps: PropTypes.object,
   /**
@@ -386,6 +424,22 @@ Dialog.propTypes /* remove-proptypes */ = {
    * @default 'paper'
    */
   scroll: PropTypes.oneOf(['body', 'paper']),
+  /**
+   * The props used for each slot inside.
+   * @default {}
+   */
+  slotProps: PropTypes.shape({
+    paper: PropTypes.oneOfType([PropTypes.func, PropTypes.object]),
+    transition: PropTypes.oneOfType([PropTypes.func, PropTypes.object]),
+  }),
+  /**
+   * The components used for each slot inside.
+   * @default {}
+   */
+  slots: PropTypes.shape({
+    paper: PropTypes.elementType,
+    transition: PropTypes.elementType,
+  }),
   /**
    * The system prop that allows defining system overrides as well as additional CSS styles.
    */
@@ -398,6 +452,7 @@ Dialog.propTypes /* remove-proptypes */ = {
    * The component used for the transition.
    * [Follow this guide](/material-ui/transitions/#transitioncomponent-prop) to learn more about the requirements for this component.
    * @default Fade
+   * @deprecated Use `slots.transition` instead. This prop will be removed in v7.
    */
   TransitionComponent: PropTypes.elementType,
   /**
@@ -407,6 +462,7 @@ Dialog.propTypes /* remove-proptypes */ = {
    *   enter: theme.transitions.duration.enteringScreen,
    *   exit: theme.transitions.duration.leavingScreen,
    * }
+   * @deprecated Use `slotProps.transition.timeout` instead. This prop will be removed in v7.
    */
   transitionDuration: PropTypes.oneOfType([
     PropTypes.number,
@@ -419,6 +475,7 @@ Dialog.propTypes /* remove-proptypes */ = {
   /**
    * Props applied to the transition element.
    * By default, the element is based on this [`Transition`](http://reactcommunity.org/react-transition-group/transition/) component.
+   * @deprecated Use `slotProps.transition` instead. This prop will be removed in v7.
    */
   TransitionProps: PropTypes.object,
 };
