@@ -66,6 +66,58 @@ export const ButtonBaseRoot = styled('button', {
   },
 });
 
+function createControlledPromise() {
+  let resolve
+  let reject
+  const p = new Promise((resolveFn, rejectFn) => {
+    resolve = resolveFn
+    reject = rejectFn
+  })
+  p.resolve = resolve
+  p.reject = reject
+  return p
+}
+
+class RippleRef {
+  current = null
+}
+
+function useLazyRipple() {
+  const [shouldMount, setShouldMount] = React.useState(false);
+  const internal = React.useRef({
+    ref: new RippleRef(),
+    shouldMount,
+    mounted: null,
+    mount: () => {
+      if (!internal.mounted) {
+        internal.mounted = createControlledPromise()
+        internal.shouldMount = true
+        setShouldMount(internal.shouldMount)
+      }
+      return internal.mounted
+    },
+    /* Ripple API */
+    start: (...args) => internal.mount().then(() => internal.ref.current.start(...args)),
+    stop: (...args) => internal.mount().then(() => internal.ref.current.stop(...args)),
+    pulsate: (...args) => {
+      internal.mount().then(() => internal.ref.current.pulsate(...args))
+    },
+  }).current;
+
+  React.useEffect(() => {
+    // XXX: Does this rely on the ordering of effects?
+    if (shouldMount) {
+      Promise.resolve().then(() => {
+        if (internal.ref.current !== null) {
+          internal.mounted.resolve()
+        }
+      })
+    }
+  }, [shouldMount])
+
+  return internal;
+}
+
 /**
  * `ButtonBase` contains as few styles as possible.
  * It aims to be a simple building block for creating a button.
@@ -108,8 +160,8 @@ const ButtonBase = React.forwardRef(function ButtonBase(inProps, ref) {
 
   const buttonRef = React.useRef(null);
 
-  const rippleRef = React.useRef(null);
-  const handleRippleRef = useForkRef(rippleRef, touchRippleRef);
+  const ripple = useLazyRipple();
+  const handleRippleRef = useForkRef(ripple.ref, touchRippleRef);
 
   const {
     isFocusVisibleRef,
@@ -133,19 +185,13 @@ const ButtonBase = React.forwardRef(function ButtonBase(inProps, ref) {
     [],
   );
 
-  const [mountedState, setMountedState] = React.useState(false);
+  const enableTouchRipple = ripple.shouldMount && !disableRipple && !disabled;
 
   React.useEffect(() => {
-    setMountedState(true);
-  }, []);
-
-  const enableTouchRipple = mountedState && !disableRipple && !disabled;
-
-  React.useEffect(() => {
-    if (focusVisible && focusRipple && !disableRipple && mountedState) {
-      rippleRef.current.pulsate();
+    if (focusVisible && focusRipple && !disableRipple) {
+      ripple.pulsate();
     }
-  }, [disableRipple, focusRipple, focusVisible, mountedState]);
+  }, [disableRipple, focusRipple, focusVisible]);
 
   function useRippleHandler(rippleAction, eventCallback, skipRippleAction = disableTouchRipple) {
     return useEventCallback((event) => {
@@ -154,8 +200,8 @@ const ButtonBase = React.forwardRef(function ButtonBase(inProps, ref) {
       }
 
       const ignore = skipRippleAction;
-      if (!ignore && rippleRef.current) {
-        rippleRef.current[rippleAction](event);
+      if (!ignore) {
+        ripple[rippleAction](event);
       }
 
       return true;
@@ -227,12 +273,11 @@ const ButtonBase = React.forwardRef(function ButtonBase(inProps, ref) {
       focusRipple &&
       !keydownRef.current &&
       focusVisible &&
-      rippleRef.current &&
       event.key === ' '
     ) {
       keydownRef.current = true;
-      rippleRef.current.stop(event, () => {
-        rippleRef.current.start(event);
+      ripple.stop(event, () => {
+        ripple.start(event);
       });
     }
 
@@ -264,13 +309,12 @@ const ButtonBase = React.forwardRef(function ButtonBase(inProps, ref) {
     if (
       focusRipple &&
       event.key === ' ' &&
-      rippleRef.current &&
       focusVisible &&
       !event.defaultPrevented
     ) {
       keydownRef.current = false;
-      rippleRef.current.stop(event, () => {
-        rippleRef.current.pulsate(event);
+      ripple.stop(event, () => {
+        ripple.pulsate(event);
       });
     }
     if (onKeyUp) {
@@ -313,7 +357,8 @@ const ButtonBase = React.forwardRef(function ButtonBase(inProps, ref) {
   if (process.env.NODE_ENV !== 'production') {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     React.useEffect(() => {
-      if (enableTouchRipple && !rippleRef.current) {
+      // XXX: what to do with this one?
+      if (enableTouchRipple && !ripple.ref.current) {
         console.error(
           [
             'MUI: The `component` prop provided to ButtonBase is invalid.',
