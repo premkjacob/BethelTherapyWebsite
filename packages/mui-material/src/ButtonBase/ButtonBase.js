@@ -78,14 +78,10 @@ function createControlledPromise() {
   return p
 }
 
-class RippleRef {
-  current = null
-}
-
 function useLazyRipple() {
   const [shouldMount, setShouldMount] = React.useState(false);
   const internal = React.useRef({
-    ref: new RippleRef(),
+    ref: { current: null },
     shouldMount,
     mounted: null,
     mount: () => {
@@ -105,7 +101,6 @@ function useLazyRipple() {
   }).current;
 
   React.useEffect(() => {
-    // XXX: Does this rely on the ordering of effects?
     if (shouldMount) {
       Promise.resolve().then(() => {
         if (internal.ref.current !== null) {
@@ -357,7 +352,6 @@ const ButtonBase = React.forwardRef(function ButtonBase(inProps, ref) {
   if (process.env.NODE_ENV !== 'production') {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     React.useEffect(() => {
-      // XXX: what to do with this one?
       if (enableTouchRipple && !ripple.ref.current) {
         console.error(
           [
@@ -409,7 +403,6 @@ const ButtonBase = React.forwardRef(function ButtonBase(inProps, ref) {
     >
       {children}
       {enableTouchRipple ? (
-        /* TouchRipple is only needed client-side, x2 boost on the server. */
         <TouchRipple ref={handleRippleRef} center={centerRipple} {...TouchRippleProps} />
       ) : null}
     </ButtonBaseRoot>
