@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import useLazyRef from '@mui/utils/useLazyRef';
 import { TouchRippleActions } from './TouchRipple.types';
 
@@ -10,10 +10,13 @@ type ControlledPromise<T = unknown> = Promise<T> & {
 export class LazyRipple {
   /** React ref to the ripple instance */
   ref: React.MutableRefObject<TouchRippleActions | null>;
+
   /** If the ripple component should be mounted */
   shouldMount: boolean;
+
   /** Promise that resolves when the ripple component is mounted */
   private mounted: ControlledPromise | null;
+
   /** React state hook setter */
   private setShouldMount: React.Dispatch<boolean> | null;
 
@@ -42,27 +45,29 @@ export class LazyRipple {
       Promise.resolve().then(() => {
         if (this.ref.current !== null) {
           this.mounted!.resolve();
-        } else {
-          if (process.env.NODE_ENV !== 'production') {
-            throw new Error(
-              [
-                'MUI: Invalid usage of the useLazyRipple hook.',
-                'The `ripple.ref` must be set on the Ripple component.',
-              ].join('\n'),
-            );
-          }
+        }
+
+        if (process.env.NODE_ENV !== 'production' && this.ref.current === null) {
+          throw new Error(
+            [
+              'MUI: Invalid usage of the useLazyRipple hook.',
+              'The `ripple.ref` must be set on the Ripple component.',
+            ].join('\n'),
+          );
         }
       });
     }
   };
 
   render() {
+    /* eslint-disable */
     const [shouldMount, setShouldMount] = React.useState(false);
 
     this.shouldMount = shouldMount;
     this.setShouldMount = setShouldMount;
 
     React.useEffect(this.mountEffect, [shouldMount]);
+    /* eslint-enable */
   }
 
   /* Ripple API */

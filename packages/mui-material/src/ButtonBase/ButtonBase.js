@@ -9,6 +9,7 @@ import useThemeProps from '../styles/useThemeProps';
 import useForkRef from '../utils/useForkRef';
 import useEventCallback from '../utils/useEventCallback';
 import useIsFocusVisible from '../utils/useIsFocusVisible';
+import useLazyRipple from './useLazyRipple';
 import TouchRipple from './TouchRipple';
 import buttonBaseClasses, { getButtonBaseUtilityClass } from './buttonBaseClasses';
 
@@ -139,7 +140,7 @@ const ButtonBase = React.forwardRef(function ButtonBase(inProps, ref) {
     if (focusVisible && focusRipple && !disableRipple) {
       ripple.pulsate();
     }
-  }, [disableRipple, focusRipple, focusVisible]);
+  }, [disableRipple, focusRipple, focusVisible, ripple]);
 
   function useRippleHandler(rippleAction, eventCallback, skipRippleAction = disableTouchRipple) {
     return useEventCallback((event) => {
@@ -303,7 +304,7 @@ const ButtonBase = React.forwardRef(function ButtonBase(inProps, ref) {
           ].join('\n'),
         );
       }
-    }, [enableTouchRipple]);
+    }, [enableTouchRipple, ripple.ref]);
   }
 
   const ownerState = {

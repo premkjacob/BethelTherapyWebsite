@@ -190,7 +190,7 @@ const ButtonBase = React.forwardRef(function ButtonBase<
           ].join('\n'),
         );
       }
-    }, [enableTouchRipple]);
+    }, [enableTouchRipple, ripple.ref]);
   }
 
   return (

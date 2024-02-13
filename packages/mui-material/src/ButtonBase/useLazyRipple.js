@@ -1,3 +1,4 @@
+import * as React from 'react';
 import useLazyRef from '@mui/utils/useLazyRef';
 
 class LazyRipple {
@@ -31,12 +32,14 @@ class LazyRipple {
   };
 
   render() {
+    /* eslint-disable */
     const [shouldMount, setShouldMount] = React.useState(false);
 
     this.shouldMount = shouldMount;
     this.setShouldMount = setShouldMount;
 
     React.useEffect(this.mountEffect, [shouldMount]);
+    /* eslint-enable */
   }
 
   /* Ripple API */
