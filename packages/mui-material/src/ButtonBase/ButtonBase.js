@@ -66,53 +66,6 @@ export const ButtonBaseRoot = styled('button', {
   },
 });
 
-function createControlledPromise() {
-  let resolve
-  let reject
-  const p = new Promise((resolveFn, rejectFn) => {
-    resolve = resolveFn
-    reject = rejectFn
-  })
-  p.resolve = resolve
-  p.reject = reject
-  return p
-}
-
-function useLazyRipple() {
-  const [shouldMount, setShouldMount] = React.useState(false);
-  const internal = React.useRef({
-    ref: { current: null },
-    shouldMount,
-    mounted: null,
-    mount: () => {
-      if (!internal.mounted) {
-        internal.mounted = createControlledPromise()
-        internal.shouldMount = true
-        setShouldMount(internal.shouldMount)
-      }
-      return internal.mounted
-    },
-    /* Ripple API */
-    start: (...args) => internal.mount().then(() => internal.ref.current.start(...args)),
-    stop: (...args) => internal.mount().then(() => internal.ref.current.stop(...args)),
-    pulsate: (...args) => {
-      internal.mount().then(() => internal.ref.current.pulsate(...args))
-    },
-  }).current;
-
-  React.useEffect(() => {
-    if (shouldMount) {
-      Promise.resolve().then(() => {
-        if (internal.ref.current !== null) {
-          internal.mounted.resolve()
-        }
-      })
-    }
-  }, [shouldMount])
-
-  return internal;
-}
-
 /**
  * `ButtonBase` contains as few styles as possible.
  * It aims to be a simple building block for creating a button.
@@ -264,12 +217,7 @@ const ButtonBase = React.forwardRef(function ButtonBase(inProps, ref) {
   const keydownRef = React.useRef(false);
   const handleKeyDown = useEventCallback((event) => {
     // Check if key is already down to avoid repeats being counted as multiple activations
-    if (
-      focusRipple &&
-      !keydownRef.current &&
-      focusVisible &&
-      event.key === ' '
-    ) {
+    if (focusRipple && !keydownRef.current && focusVisible && event.key === ' ') {
       keydownRef.current = true;
       ripple.stop(event, () => {
         ripple.start(event);
@@ -301,12 +249,7 @@ const ButtonBase = React.forwardRef(function ButtonBase(inProps, ref) {
   const handleKeyUp = useEventCallback((event) => {
     // calling preventDefault in keyUp on a <button> will not dispatch a click event if Space is pressed
     // https://codesandbox.io/p/sandbox/button-keyup-preventdefault-dn7f0
-    if (
-      focusRipple &&
-      event.key === ' ' &&
-      focusVisible &&
-      !event.defaultPrevented
-    ) {
+    if (focusRipple && event.key === ' ' && focusVisible && !event.defaultPrevented) {
       keydownRef.current = false;
       ripple.stop(event, () => {
         ripple.pulsate(event);
