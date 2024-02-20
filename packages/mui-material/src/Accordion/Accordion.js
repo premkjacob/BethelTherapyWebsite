@@ -168,7 +168,10 @@ const Accordion = React.forwardRef(function Accordion(inProps, ref) {
 
   const classes = useUtilityClasses(ownerState);
 
-  const backwardCompatibleSlots = { transition: TransitionComponentProp, ...slots };
+  const backwardCompatibleSlots = {
+    transition: slotProps?.transition?.component ?? TransitionComponentProp,
+    ...slots,
+  };
   const backwardCompatibleSlotProps = { transition: TransitionPropsProp, ...slotProps };
 
   const [TransitionSlot, transitionProps] = useSlot('transition', {
