@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import useLazyRef from '@mui/utils/useLazyRef';
 import { TouchRippleActions } from './TouchRipple.types';
