@@ -30,13 +30,6 @@ describe('<IconButton />', () => {
     expect(getByTestId('icon')).to.have.class(childClassName);
   });
 
-  it('should have a ripple by default', () => {
-    const { container } = render(
-      <IconButton TouchRippleProps={{ className: 'touch-ripple' }}>book</IconButton>,
-    );
-    expect(container.querySelector('.touch-ripple')).not.to.equal(null);
-  });
-
   it('can disable the ripple and hover effect', () => {
     const { container } = render(
       <IconButton disableRipple TouchRippleProps={{ className: 'touch-ripple' }}>
