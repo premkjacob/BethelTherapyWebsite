@@ -90,12 +90,6 @@ describe('<Fab />', () => {
     expect(button).to.have.class(classes.sizeMedium);
   });
 
-  it('should have a ripple by default', () => {
-    const { container } = render(<Fab>Fab</Fab>);
-
-    expect(container.querySelector(`.${touchRippleClasses.root}`)).not.to.equal(null);
-  });
-
   it('should pass disableRipple to ButtonBase', () => {
     const { container } = render(<Fab disableRipple>Fab</Fab>);
 

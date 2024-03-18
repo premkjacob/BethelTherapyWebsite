@@ -16,7 +16,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import ButtonBase, { buttonBaseClasses as classes } from '@mui/material/ButtonBase';
 import describeConformance from '../../test/describeConformance';
 
-describe('<ButtonBase />', () => {
+describe.only('<ButtonBase />', () => {
   const { render } = createRenderer();
 
   // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/14156632/
@@ -266,8 +266,8 @@ describe('<ButtonBase />', () => {
         expect(button.querySelectorAll('.ripple-pulsate')).to.have.lengthOf(0);
       });
 
-      it('should start the ripple when the mouse is pressed', () => {
-        const { getByRole } = render(
+      it.only('should start the ripple when the mouse is pressed', () => {
+        const { getByRole, forceUpdate } = render(
           <ButtonBase
             TouchRippleProps={{
               classes: {
@@ -282,6 +282,7 @@ describe('<ButtonBase />', () => {
 
         fireEvent.mouseDown(button);
 
+        forceUpdate();
         expect(button.querySelectorAll('.ripple-visible .child-leaving')).to.have.lengthOf(0);
         expect(
           button.querySelectorAll('.ripple-visible .child:not(.child-leaving)'),

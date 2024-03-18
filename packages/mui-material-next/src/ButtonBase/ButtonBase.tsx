@@ -18,8 +18,8 @@ import {
   ExtendButtonBase,
 } from './ButtonBase.types';
 import TouchRipple from './TouchRipple';
+import useLazyRipple from './useLazyRipple';
 import useTouchRipple from './useTouchRipple';
-import { TouchRippleActions } from './TouchRipple.types';
 
 const useUtilityClasses = (ownerState: ButtonBaseOwnerState) => {
   const { disabled, focusVisible, active, focusVisibleClassName, classes } = ownerState;
@@ -127,13 +127,13 @@ const ButtonBase = React.forwardRef(function ButtonBase<
     ComponentProp = LinkComponent;
   }
 
-  const rippleRef = React.useRef<TouchRippleActions>(null);
-  const handleRippleRef = useForkRef(rippleRef, touchRippleRef);
+  const ripple = useLazyRipple();
+  const handleRippleRef = useForkRef(ripple.ref, touchRippleRef);
   const { enableTouchRipple, getRippleHandlers } = useTouchRipple({
     disabled,
     disableRipple,
     disableTouchRipple,
-    rippleRef,
+    ripple,
   });
 
   React.useImperativeHandle(
@@ -182,7 +182,7 @@ const ButtonBase = React.forwardRef(function ButtonBase<
   if (process.env.NODE_ENV !== 'production') {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     React.useEffect(() => {
-      if (enableTouchRipple && !rippleRef.current) {
+      if (enableTouchRipple && !ripple.ref.current) {
         console.error(
           [
             'MUI: The `component` prop provided to ButtonBase is invalid.',
@@ -190,7 +190,7 @@ const ButtonBase = React.forwardRef(function ButtonBase<
           ].join('\n'),
         );
       }
-    }, [enableTouchRipple]);
+    }, [enableTouchRipple, ripple.ref]);
   }
 
   return (

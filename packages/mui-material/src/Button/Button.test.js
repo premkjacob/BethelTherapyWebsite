@@ -555,15 +555,6 @@ describe('<Button />', () => {
     expect(endIcon).not.to.have.class(classes.startIcon);
   });
 
-  it('should have a ripple by default', () => {
-    const { getByRole } = render(
-      <Button TouchRippleProps={{ className: 'touch-ripple' }}>Hello World</Button>,
-    );
-    const button = getByRole('button');
-
-    expect(button.querySelector('.touch-ripple')).not.to.equal(null);
-  });
-
   it('can disable the ripple', () => {
     const { getByRole } = render(
       <Button disableRipple TouchRippleProps={{ className: 'touch-ripple' }}>

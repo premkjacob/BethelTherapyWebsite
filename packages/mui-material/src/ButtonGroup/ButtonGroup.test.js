@@ -100,15 +100,6 @@ describe('<ButtonGroup />', () => {
     expect(button).to.have.class('MuiButton-outlinedSizeLarge');
   });
 
-  it('should have a ripple by default', () => {
-    const { container } = render(
-      <ButtonGroup>
-        <Button TouchRippleProps={{ classes: { root: 'touchRipple' } }}>Hello World</Button>
-      </ButtonGroup>,
-    );
-    expect(container.querySelector('.touchRipple')).not.to.equal(null);
-  });
-
   it('can disable the elevation', () => {
     const { getByRole } = render(
       <ButtonGroup disableElevation>

@@ -19,16 +19,11 @@ describe('<Tab />', () => {
     skip: ['componentProp', 'componentsProp'],
   }));
 
-  it('should have a ripple by default', () => {
-    const { container } = render(<Tab TouchRippleProps={{ className: 'touch-ripple' }} />);
-
-    expect(container.querySelector('.touch-ripple')).not.to.equal(null);
-  });
-
   it('can disable the ripple', () => {
     const { container } = render(
       <Tab disableRipple TouchRippleProps={{ className: 'touch-ripple' }} />,
     );
+    container.click();
 
     expect(container.querySelector('.touch-ripple')).to.equal(null);
   });

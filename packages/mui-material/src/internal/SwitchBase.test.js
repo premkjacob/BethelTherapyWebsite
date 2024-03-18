@@ -43,19 +43,6 @@ describe('<SwitchBase />', () => {
     expect(buttonInside.childNodes[1]).to.have.text('unchecked');
   });
 
-  it('should have a ripple by default', () => {
-    const { getByTestId } = render(
-      <SwitchBase
-        checkedIcon="checked"
-        icon="unchecked"
-        type="checkbox"
-        TouchRippleProps={{ 'data-testid': 'TouchRipple' }}
-      />,
-    );
-
-    expect(getByTestId('TouchRipple')).not.to.equal(null);
-  });
-
   it('can have edge', () => {
     const { container } = render(
       <SwitchBase edge="start" icon="unchecked" checkedIcon="checked" type="checkbox" />,

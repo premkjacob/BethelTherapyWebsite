@@ -2,13 +2,14 @@
 import * as React from 'react';
 import { useEventCallback } from '@mui/material/utils';
 import { TouchRippleActions } from './TouchRipple.types';
+import { LazyRipple } from './useLazyRipple';
 
 interface UseTouchRippleProps {
   disabled: boolean;
   disableFocusRipple?: boolean;
   disableRipple?: boolean;
   disableTouchRipple?: boolean;
-  rippleRef: React.RefObject<TouchRippleActions>;
+  ripple: LazyRipple;
 }
 
 interface RippleEventHandlers {
@@ -24,15 +25,16 @@ interface RippleEventHandlers {
 }
 
 const useTouchRipple = (props: UseTouchRippleProps) => {
-  const { disabled, disableRipple, disableTouchRipple, rippleRef } = props;
+  const { disabled, disableRipple, disableTouchRipple, ripple } = props;
 
   function useRippleHandler(
     rippleAction: keyof TouchRippleActions,
     skipRippleAction = disableTouchRipple,
   ) {
     return useEventCallback((event: React.SyntheticEvent) => {
-      if (!skipRippleAction && rippleRef.current) {
-        rippleRef.current[rippleAction](event);
+      if (!skipRippleAction) {
+        const action = ripple[rippleAction] as TouchRippleActions[typeof rippleAction];
+        action(event);
       }
 
       return true;
@@ -49,13 +51,7 @@ const useTouchRipple = (props: UseTouchRippleProps) => {
   const handleTouchEnd = useRippleHandler('stop');
   const handleTouchMove = useRippleHandler('stop');
 
-  const [mountedState, setMountedState] = React.useState(false);
-
-  React.useEffect(() => {
-    setMountedState(true);
-  }, []);
-
-  const enableTouchRipple = mountedState && !disableRipple && !disabled;
+  const enableTouchRipple = ripple.shouldMount && !disableRipple && !disabled;
 
   const getRippleHandlers = React.useMemo(() => {
     const rippleHandlers = {

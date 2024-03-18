@@ -123,16 +123,6 @@ describe('<ButtonGroup />', () => {
     expect(button).to.have.class(buttonClasses.sizeLarge);
   });
 
-  it('should have a ripple by default', () => {
-    const props = { TouchRippleProps: { classes: { root: 'touchRipple' } } };
-    const { container } = render(
-      <ButtonGroup>
-        <Button {...props}>Hello World</Button>
-      </ButtonGroup>,
-    );
-    expect(container.querySelector('.touchRipple')).not.to.equal(null);
-  });
-
   it('can disable the elevation', () => {
     const { getByRole } = render(
       <ButtonGroup disableElevation>
