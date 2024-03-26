@@ -262,6 +262,30 @@ describe('e2e', () => {
     });
   });
 
+  describe('<MaterialNestedMenu />', () => {
+    it('should open submenus through keyboard without throwing any error', async () => {
+      await renderFixture('NestedMenuDemo/MaterialNestedMenu');
+
+      const menuButton = (await screen.getByRole('button'))!;
+      await menuButton.click();
+
+      await screen.getByText('Food');
+      await screen.getByText('Drinks');
+      await screen.getByText('Desserts');
+
+      await page.keyboard.down('ArrowDown');
+      await page.keyboard.down('ArrowRight');
+
+      await screen.getByText('Alcoholic');
+      await screen.getByText('Non-Alcoholic');
+      await page.keyboard.down('ArrowRight');
+
+      await screen.getByText('Soda');
+      await screen.getByText('Iced Tea');
+      await screen.getByText('Lemonade');
+    });
+  });
+
   describe('<TextareaAutosize />', () => {
     // https://github.com/mui/material-ui/issues/32640
     it('should handle suspense without error', async () => {
