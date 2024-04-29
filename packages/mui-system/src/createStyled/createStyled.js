@@ -1,4 +1,8 @@
 /* eslint-disable no-underscore-dangle */
+import * as React from 'react';
+import PropTypes from 'prop-types';
+import clsx from 'clsx';
+import isPropValid from '@emotion/is-prop-valid';
 import styledEngineStyled, { internal_processStyles as processStyles } from '@mui/styled-engine';
 import { isPlainObject } from '@mui/utils/deepmerge';
 import capitalize from '@mui/utils/capitalize';
@@ -10,20 +14,9 @@ function isEmpty(obj) {
   return Object.keys(obj).length === 0;
 }
 
-// https://github.com/emotion-js/emotion/blob/26ded6109fcd8ca9875cc2ce4564fee678a3f3c5/packages/styled/src/utils.js#L40
-function isStringTag(tag) {
-  return (
-    typeof tag === 'string' &&
-    // 96 is one less than the char code
-    // for "a" so this is checking that
-    // it's a lowercase character
-    tag.charCodeAt(0) > 96
-  );
-}
-
 // Update /system/styled/#api in case if this changes
 export function shouldForwardProp(prop) {
-  return prop !== 'ownerState' && prop !== 'theme' && prop !== 'sx' && prop !== 'as';
+  return prop !== 'ownerState' && prop !== 'theme';
 }
 
 export const systemDefaultTheme = createTheme();
@@ -115,6 +108,7 @@ export default function createStyled(input = {}) {
       // TODO v6: remove `lowercaseFirstLetter()` in the next major release
       // For more details: https://github.com/mui/material-ui/pull/37908
       overridesResolver = defaultOverridesResolver(lowercaseFirstLetter(componentSlot)),
+      shouldForwardProp: shouldForwardPropInput,
       ...options
     } = inputOptions;
 
@@ -147,15 +141,69 @@ export default function createStyled(input = {}) {
     } else if (componentSlot) {
       // any other slot specified
       shouldForwardPropOption = slotShouldForwardProp;
-    } else if (isStringTag(tag)) {
-      // for string (html) tag, preserve the behavior in emotion & styled-components.
-      shouldForwardPropOption = undefined;
     }
 
-    const defaultStyledResolver = styledEngineStyled(tag, {
-      shouldForwardProp: shouldForwardPropOption,
+    if (shouldForwardPropInput) {
+      shouldForwardPropOption = shouldForwardPropInput;
+    }
+
+    // This is needed in order to intercept the transformed sx values potentially done by the zero-runtime library
+    const AugmentedTag = React.forwardRef(function AugmentedTag(props, ref) {
+      const { sx, as, ...other } = props;
+      const sxClass = typeof sx === 'string' ? sx : sx?.className;
+      const sxVars = sx && typeof sx !== 'string' ? sx.vars : undefined;
+      const sxVarsStyles = {};
+
+      if (sxVars) {
+        Object.entries(sxVars).forEach(([cssVariable, [value, isUnitLess]]) => {
+          if (typeof value === 'string' || isUnitLess) {
+            sxVarsStyles[`--${cssVariable}`] = value;
+          } else {
+            sxVarsStyles[`--${cssVariable}`] = `${value}px`;
+          }
+        });
+      }
+
+      const C = as ?? tag;
+      let filteredProps = other;
+      if (typeof C === 'string') {
+        filteredProps = {};
+        Object.keys(other).forEach((prop) => {
+          if (isPropValid(prop)) {
+            filteredProps[prop] = other[prop];
+          }
+        });
+      }
+
+      return React.createElement(C, {
+        ...filteredProps,
+        className: clsx(props.className, sxClass),
+        style: { ...sxVarsStyles, ...props.style },
+        ref,
+      });
+    });
+
+    AugmentedTag.propTypes = {
+      as: PropTypes.elementType,
+      className: PropTypes.string,
+      style: PropTypes.object,
+      sx: PropTypes.oneOfType([
+        PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.func, PropTypes.object, PropTypes.bool])),
+        PropTypes.func,
+        PropTypes.object,
+        PropTypes.shape({
+          className: PropTypes.string,
+          vars: PropTypes.object,
+        }),
+        PropTypes.string,
+      ]),
+    };
+
+    const defaultStyledResolver = styledEngineStyled(AugmentedTag, {
       label,
       ...options,
+      // The AugmentedTag will handle the props interception
+      shouldForwardProp: shouldForwardPropOption,
     });
 
     const transformStyleArg = (stylesArg) => {

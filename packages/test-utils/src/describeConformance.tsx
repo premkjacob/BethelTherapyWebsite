@@ -1003,6 +1003,38 @@ function testThemeCustomPalette(element: React.ReactElement, getOptions: () => C
   });
 }
 
+function testSupportPigmentCssSxProp(
+  element: React.ReactElement,
+  getOptions: () => ConformanceOptions,
+) {
+  const { render } = getOptions();
+  // TODO: Enable when propTypes are updated
+  it.skip('should support sx as string', () => {
+    const { getByTestId } = render(
+      React.cloneElement(element, { sx: 'sx-classname', 'data-testid': 'component' }),
+    );
+
+    const classList = Array.from(getByTestId('component').classList ?? []);
+
+    expect(classList).to.contain('sx-classname');
+  });
+
+  it('should support sx as Pigment CSS object', () => {
+    const { getByTestId } = render(
+      React.cloneElement(element, {
+        'data-testid': 'component',
+        sx: {
+          className: 'sx-classname',
+          vars: { spacing: [10, false] },
+        },
+      }),
+    );
+    const classList = Array.from(getByTestId!('component').classList);
+
+    expect(classList).to.contain('sx-classname');
+    expect(getByTestId!('component').getAttribute('style')).to.contain('--spacing: 10px;');
+  });
+}
 const fullSuite = {
   componentProp: testComponentProp,
   componentsProp: testComponentsProp,
@@ -1018,6 +1050,7 @@ const fullSuite = {
   themeStyleOverrides: testThemeStyleOverrides,
   themeVariants: testThemeVariants,
   themeCustomPalette: testThemeCustomPalette,
+  supportPigmentCssSxProp: testSupportPigmentCssSxProp,
 };
 
 /**

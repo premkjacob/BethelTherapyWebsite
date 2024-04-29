@@ -22,6 +22,8 @@ describe('<Fade />', () => {
     skip: [
       'componentProp',
       'componentsProp',
+      // does not support sx prop, propagates to the children
+      'supportPigmentCssSxProp',
       'themeDefaultProps',
       'themeStyleOverrides',
       'themeVariants',

@@ -8,6 +8,7 @@ import {
   unstable_useControlled as useControlled,
   unstable_useId as useId,
 } from '@mui/utils';
+import { shouldForwardProp } from '@mui/system';
 import { useThemeProps } from '../styles';
 import styled from '../styles/styled';
 import { getAccordionUtilityClass } from './accordionClasses';
@@ -35,6 +36,7 @@ const useUtilityClasses = (ownerState: AccordionOwnerState) => {
 const AccordionRoot = styled(StyledListItem as unknown as 'div', {
   name: 'JoyAccordion',
   slot: 'Root',
+  shouldForwardProp: (prop) => shouldForwardProp(prop) || prop === 'ownerState',
   overridesResolver: (props, styles) => styles.root,
 })<{ ownerState: AccordionOwnerState }>({
   borderBottom: 'var(--Accordion-borderBottom)',
