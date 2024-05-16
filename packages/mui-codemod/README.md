@@ -259,6 +259,72 @@ npx @mui/codemod@next deprecations/alert-classes <path>
 npx @mui/codemod@next deprecations/alert-props <path>
 ```
 
+#### `autocomplete-props`
+
+```diff
+ <Autocomplete
+-  ChipProps={{ height: 10 }}
+-  PaperComponent={CustomPaper}
+-  PopperComponent={CustomPopper}
+-  ListboxComponent={CustomListbox}
+-  ListboxProps={{ height: 12 }}
+-  componentsProps={{
+-    clearIndicator: { width: 10 },
+-    paper: { width: 12 },
+-    popper: { width: 14 },
+-    popupIndicator: { width: 16 },
+-  }}
++  slots={{
++    paper: CustomPaper,
++    popper: CustomPopper,
++    listbox: CustomListbox,
++  }}
++  slotProps={{
++    chip: { height: 10 },
++    listbox: { height: 12 },
++    clearIndicator: { width: 10 },
++    paper: { width: 12 },
++    popper: { width: 14 },
++    popupIndicator: { width: 16 },
++  }}
+ />
+```
+
+```diff
+ MuiAutocomplete: {
+   defaultProps: {
+-    ChipProps: { height: 10 },
+-    PaperComponent: CustomPaper,
+-    PopperComponent: CustomPopper,
+-    ListboxComponent: CustomListbox,
+-    ListboxProps: { height: 12 },
+-    componentsProps: {
+-       clearIndicator: { width: 10 },
+-       paper: { width: 12 },
+-       popper: { width: 14 },
+-       popupIndicator: { width: 16 },
+-     }
++    slots: {
++      paper: CustomPaper,
++      popper: CustomPopper,
++      listbox: CustomListbox,
++    },
++    slotProps: {
++      chip: { height: 10 },
++      listbox: { height: 12 },
++      clearIndicator: { width: 10 },
++      paper: { width: 12 },
++      popper: { width: 14 },
++      popupIndicator: { width: 16 },
++    },
+   },
+ },
+```
+
+```bash
+npx @mui/codemod@next deprecations/autocomplete-props <path>
+```
+
 #### `avatar-props`
 
 ```diff
@@ -845,6 +911,42 @@ CSS transforms:
 npx @mui/codemod@next deprecations/chip-classes <path>
 ```
 
+#### `circular-progress-classes`
+
+JS transforms:
+
+```diff
+ import { circularProgressClasses } from '@mui/material/CircularProgress';
+
+ MuiCircularProgress: {
+   styleOverrides: {
+     root: {
+-      [`& .${circularProgressClasses.circleDeterminate}`]: {
++      [`&.${circularProgressClasses.determinate} > .${circularProgressClasses.circle}`]: {
+         color: 'red',
+        },
+-      [`& .${circularProgressClasses.circleIndeterminate}`]: {
++      [`&.${circularProgressClasses.indeterminate} > .${circularProgressClasses.circle}`]: {
+         color: 'red',
+        },
+     },
+   },
+ },
+```
+
+CSS transforms:
+
+```diff
+- .MuiCircularProgress-circleDeterminate
++.MuiCircularProgress-determinate > .MuiCircularProgress-circle
+- .MuiCircularProgress-circleIndeterminate
++.MuiCircularProgress-indeterminate > .MuiCircularProgress-circle
+```
+
+```bash
+npx @mui/codemod@next deprecations/circular-progress-classes <path>
+```
+
 #### `divider-props`
 
 ```diff
@@ -856,6 +958,29 @@ npx @mui/codemod@next deprecations/chip-classes <path>
 
 ```bash
 npx @mui/codemod@next deprecations/divider-props <path>
+```
+
+#### `form-control-label-props`
+
+```diff
+ <FormControlLabel
+-  componentsProps={{ typography: typographyProps }}
++  slotProps={{ typography: typographyProps }}
+ />
+```
+
+```diff
+ MuiFormControlLabel: {
+   defaultProps: {
+-  componentsProps={{ typography: typographyProps }}
++  slotProps={{ typography: typographyProps }}
+  },
+ },
+```
+
+```bash
+npx @mui/codemod@next deprecations/form-control-label-props <path>
+
 ```
 
 #### `pagination-item-classes`
@@ -920,6 +1045,28 @@ CSS transforms:
 
 ```bash
 npx @mui/codemod@next deprecations/pagination-item-classes <path>
+```
+
+#### `pagination-item-props`
+
+```diff
+ <PaginationItem
+-  components={{ first: FirstIcon, last: LastIcon, next: NextIcon, previous: PreviousIcons }}
++  slots={{ first: FirstIcon, last: LastIcon, next: NextIcon, previous: PreviousIcons }}
+ />
+```
+
+```diff
+ MuiPaginationItem: {
+   defaultProps: {
+-    components: { first: FirstIcon, last: LastIcon, next: NextIcon, previous: PreviousIcons }
++    slots: { first: FirstIcon, last: LastIcon, next: NextIcon, previous: PreviousIcons }
+  },
+ },
+```
+
+```bash
+npx @mui/codemod@next deprecations/pagination-item-props <path>
 ```
 
 #### `slider-props`
@@ -1054,7 +1201,73 @@ npx @mui/codemod@next deprecations/step-connector-classes <path>
 
 ### v6.0.0
 
+#### `theme-v6`
+
+```bash
+npx @mui/codemod@next v6.0.0/theme-v6 <path>
+```
+
+Update the theme creation from `@mui/system@v5` to be compatible with `@pigment-css/react`.
+
+- replace palette mode conditional with `theme.applyStyles()`
+- replace `ownerState` with `variants`
+- move theme variants to the root slot
+
+```diff
+  createTheme({
+    components: {
+      MuiButton: {
+-        variants: [
+-          {
+-            props: { color: 'primary' },
+-            style: {
+-              color: 'red',
+-            },
+-          },
+-        ],
+        styleOverrides: {
+-          root: ({ theme, ownerState }) => ({
++          root: ({ theme }) => ({
+            ...ownerState.variant === 'contained' && {
+              backgroundColor: alpha(theme.palette.primary.main, 0.8),
+              ...theme.palette.mode === 'dark' && {
+                backgroundColor: alpha(theme.palette.primary.light, 0.9),
+              }
+            },
++           variants: [
++             {
++               prop: { variant: 'contained' },
++               style: {
++                 backgroundColor: alpha(theme.palette.primary.main, 0.8),
++               },
++             },
++             {
++               prop: { variant: 'contained' },
++               style: {
++                 ...theme.applyStyles('dark', {
++                   backgroundColor: alpha(theme.palette.primary.light, 0.9),
++                 })
++               },
++             },
++             {
++               prop: { color: 'primary' },
++               style: {
++                 color: 'red',
++               },
++             },
++           ],
+          })
+        }
+      }
+    }
+  })
+```
+
 #### `styled-v6`
+
+```bash
+npx @mui/codemod@next v6.0.0/styled-v6 <path>
+```
 
 Updates the usage of `styled` from `@mui/system@v5` to be compatible with `@pigment-css/react`.
 
