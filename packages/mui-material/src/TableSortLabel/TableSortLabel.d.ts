@@ -4,8 +4,28 @@ import { Theme } from '..';
 import { ExtendButtonBase, ExtendButtonBaseTypeMap } from '../ButtonBase';
 import { OverrideProps } from '../OverridableComponent';
 import { TableSortLabelClasses } from './tableSortLabelClasses';
+import { CreateSlotsAndSlotProps, SlotProps } from '../utils/types';
 
-export interface TableSortLabelOwnProps {
+export interface TableSortLabelSlots {
+  /**
+   * Sort icon to use.
+   * @default ArrowDownwardIcon
+   */
+  icon?: React.ElementType;
+}
+
+export type TableSortLabelSlotsAndSlotProps = CreateSlotsAndSlotProps<
+  TableSortLabelSlots,
+  {
+    icon: SlotProps<
+      React.ElementType<React.SVGAttributes<SVGSVGElement>>,
+      {},
+      TableSortLabelOwnerState
+    >;
+  }
+>;
+
+export interface TableSortLabelOwnProps extends TableSortLabelSlotsAndSlotProps {
   /**
    * If `true`, the label will have the active styling (should be true for the sorted column).
    * @default false
@@ -32,6 +52,7 @@ export interface TableSortLabelOwnProps {
   /**
    * Sort icon to use.
    * @default ArrowDownwardIcon
+   * @deprecated Use `slots.icon` instead. This prop will be removed in v7. See [Migrating from deprecated APIs](/material-ui/migration/migrating-from-deprecated-apis/) for more details.
    */
   IconComponent?: React.JSXElementConstructor<{
     className: string;
@@ -70,5 +91,7 @@ export type TableSortLabelProps<
 > = OverrideProps<TableSortLabelTypeMap<AdditionalProps, RootComponent>, RootComponent> & {
   component?: React.ElementType;
 };
+
+export interface TableSortLabelOwnerState extends TableSortLabelProps {}
 
 export default TableSortLabel;

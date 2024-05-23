@@ -1,4 +1,5 @@
 import transformAccordionProps from '../accordion-props';
+import transformTableSortLabelProps from '../table-sort-label-props';
 import transformAutocompleteProps from '../autocomplete-props';
 import transformFormControlLabelProps from '../form-control-label-props';
 import transformAvatarProps from '../avatar-props';
@@ -23,6 +24,7 @@ import transformTextFieldProps from '../text-field-props';
  */
 export default function deprecationsAll(file, api, options) {
   file.source = transformAccordionProps(file, api, options);
+  file.source = transformTableSortLabelProps(file, api, options);
   file.source = transformAutocompleteProps(file, api, options);
   file.source = transformFormControlLabelProps(file, api, options);
   file.source = transformAvatarProps(file, api, options);

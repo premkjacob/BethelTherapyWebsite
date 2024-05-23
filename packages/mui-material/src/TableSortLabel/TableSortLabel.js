@@ -8,6 +8,7 @@ import ArrowDownwardIcon from '../internal/svg-icons/ArrowDownward';
 import { styled, createUseThemeProps } from '../zero-styled';
 import capitalize from '../utils/capitalize';
 import tableSortLabelClasses, { getTableSortLabelUtilityClass } from './tableSortLabelClasses';
+import useSlot from '../utils/useSlot';
 
 const useThemeProps = createUseThemeProps('MuiTableSortLabel');
 
@@ -103,6 +104,8 @@ const TableSortLabel = React.forwardRef(function TableSortLabel(inProps, ref) {
     direction = 'asc',
     hideSortIcon = false,
     IconComponent = ArrowDownwardIcon,
+    slots = {},
+    slotProps = {},
     ...other
   } = props;
 
@@ -116,6 +119,18 @@ const TableSortLabel = React.forwardRef(function TableSortLabel(inProps, ref) {
 
   const classes = useUtilityClasses(ownerState);
 
+  const externalForwardedProps = {
+    slots,
+    slotProps,
+  };
+
+  const [IconSlot, iconProps] = useSlot('icon', {
+    elementType: IconComponent,
+    externalForwardedProps,
+    ownerState,
+    className: classes.icon,
+  });
+
   return (
     <TableSortLabelRoot
       className={clsx(classes.root, className)}
@@ -126,13 +141,7 @@ const TableSortLabel = React.forwardRef(function TableSortLabel(inProps, ref) {
       {...other}
     >
       {children}
-      {hideSortIcon && !active ? null : (
-        <TableSortLabelIcon
-          as={IconComponent}
-          className={clsx(classes.icon)}
-          ownerState={ownerState}
-        />
-      )}
+      {hideSortIcon && !active ? null : <TableSortLabelIcon as={IconSlot} {...iconProps} />}
     </TableSortLabelRoot>
   );
 });
@@ -172,8 +181,23 @@ TableSortLabel.propTypes /* remove-proptypes */ = {
   /**
    * Sort icon to use.
    * @default ArrowDownwardIcon
+   * @deprecated Use `slots.icon` instead. This prop will be removed in v7. See [Migrating from deprecated APIs](/material-ui/migration/migrating-from-deprecated-apis/) for more details.
    */
   IconComponent: PropTypes.elementType,
+  /**
+   * The props used for each slot inside.
+   * @default {}
+   */
+  slotProps: PropTypes.shape({
+    icon: PropTypes.oneOfType([PropTypes.func, PropTypes.object]),
+  }),
+  /**
+   * The components used for each slot inside.
+   * @default {}
+   */
+  slots: PropTypes.shape({
+    icon: PropTypes.elementType,
+  }),
   /**
    * The system prop that allows defining system overrides as well as additional CSS styles.
    */
