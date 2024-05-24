@@ -31,11 +31,17 @@ function createLoading(sx: BoxProps['sx']) {
 }
 
 const CoreShowcase = dynamic(() => import('./CoreShowcase'), {
-  loading: createLoading({ height: 723, mt: { md: 2 } }),
+  loading: createLoading({ height: 660 }),
 });
+
 const AdvancedShowcase = dynamic(() => import('./AdvancedShowcase'), {
-  loading: createLoading({ height: 750, mt: { md: 2 } }),
+  loading: createLoading({ height: 660 }),
 });
+
+const ToolpadShowcase = dynamic(() => import('./ToolpadShowcase'), {
+  loading: createLoading({ height: 674 }),
+});
+
 const StoreTemplatesBanner = dynamic(() => import('./StoreTemplatesBanner'));
 const DesignKits = dynamic(() => import('./DesignKits'));
 
@@ -46,8 +52,9 @@ export default function ProductSuite() {
     threshold: 0,
     rootMargin: '200px',
   });
+
   return (
-    <Section bg="gradient" ref={ref}>
+    <Section bg="gradient" ref={ref} cozy>
       <Grid container spacing={2}>
         <Grid md={6}>
           <SectionHeadline
@@ -76,11 +83,12 @@ export default function ProductSuite() {
               <PrefetchDesignKitImages />
               {productIndex === 0 && <CoreShowcase />}
               {productIndex === 1 && <AdvancedShowcase />}
-              {productIndex === 2 && <StoreTemplatesBanner />}
-              {productIndex === 3 && <DesignKits />}
+              {productIndex === 2 && <ToolpadShowcase />}
+              {productIndex === 3 && <StoreTemplatesBanner />}
+              {productIndex === 4 && <DesignKits />}
             </React.Fragment>
           ) : (
-            <Box sx={{ height: { xs: 0, md: 803 } }} />
+            <Box sx={{ height: { xs: 0, md: 690 } }} />
           )}
         </Grid>
       </Grid>

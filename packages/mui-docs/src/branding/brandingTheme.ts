@@ -1230,7 +1230,7 @@ export function getThemedComponents(): ThemeOptions {
             padding: 0,
             '& .MuiSwitch-switchBase': {
               '&.Mui-checked': {
-                transform: 'translateX(11px)',
+                transform: 'translateX(12px)',
                 color: '#fff',
               },
             },

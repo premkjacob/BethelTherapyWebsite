@@ -65,9 +65,9 @@ const code = `
   </Box>
 </Card>`;
 
-const startLine = [32, 21, 17];
-const endLine = [42, 26, 17];
-const scrollTo = [540, 320, 200];
+const startLine = [33, 22, 18];
+const endLine = [43, 27, 18];
+const scrollTo = [541, 321, 201];
 
 export const useResizeHandle = (
   target: React.MutableRefObject<HTMLDivElement | null>,
@@ -314,7 +314,7 @@ export default function MaterialStyling() {
                 position: 'relative',
               }}
             >
-              <HighlightedCode copyButtonHidden plainStyle code={code} language="jsx" />
+              <HighlightedCode copyButtonHidden code={code} language="jsx" plainStyle />
               <FlashCode startLine={startLine[index]} endLine={endLine[index]} sx={{ mx: 1 }} />
             </Frame.Info>
           </Frame>
