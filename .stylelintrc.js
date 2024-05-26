@@ -20,7 +20,7 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['**/*.js', '**/*.cjs', '**/*.mjs', '**/*.ts', '**/*.tsx'],
+      files: ['**/*.js', '**/*.cjs', '**/*.mjs', '**/*.jsx', '**/*.ts', '**/*.tsx'],
       customSyntax: 'postcss-styled-syntax',
     },
   ],
