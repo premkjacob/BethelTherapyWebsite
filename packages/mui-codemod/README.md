@@ -1314,7 +1314,15 @@ npx @mui/codemod@next deprecations/step-connector-classes <path>
 
 ### v6.0.0
 
-#### `theme-v6`
+#### `sx-prop`
+
+```bash
+npx @mui/codemod@next v6.0.0/sx-prop <path>
+```
+
+Update the usage of the `sx` prop to be compatible with `@pigment-css/react`.
+
+#### `theme`
 
 ```bash
 npx @mui/codemod@next v6.0.0/theme-v6 <path>
@@ -1376,10 +1384,10 @@ Update the theme creation from `@mui/system@v5` to be compatible with `@pigment-
   })
 ```
 
-#### `styled-v6`
+#### `styled`
 
 ```bash
-npx @mui/codemod@next v6.0.0/styled-v6 <path>
+npx @mui/codemod@next v6.0.0/styled <path>
 ```
 
 Updates the usage of `styled` from `@mui/system@v5` to be compatible with `@pigment-css/react`.
