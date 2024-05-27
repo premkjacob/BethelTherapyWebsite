@@ -6,6 +6,47 @@ import { InternalStandardProps as StandardProps } from '..';
 import { SnackbarContentProps } from '../SnackbarContent';
 import { TransitionProps } from '../transitions/transition';
 import { SnackbarClasses } from './snackbarClasses';
+import { CreateSlotsAndSlotProps, SlotProps } from '../utils/types';
+
+export interface SnackbarSlots {
+  /**
+   * The component that renders the transition.
+   * [Follow this guide](/material-ui/transitions/#transitioncomponent-prop) to learn more about the requirements for this component.
+   * @default Grow
+   */
+  transition?: React.JSXElementConstructor<
+    TransitionProps & { children: React.ReactElement<any, any> }
+  >;
+}
+
+export interface SnackbarTransitionSlotPropsOverrides {}
+
+export type SnackbarSlotsAndSlotProps = CreateSlotsAndSlotProps<
+  SnackbarSlots,
+  {
+    /**
+     * Props applied to the `ClickAwayListener` element.
+     */
+    clickAwayListener?: SlotProps<
+      React.ElementType<Partial<ClickAwayListenerProps>>,
+      {},
+      SnackbarOwnerState
+    >;
+    /**
+     * Props applied to the [`SnackbarContent`](/material-ui/api/snackbar-content/) element.
+     */
+    content?: SlotProps<React.ElementType<Partial<SnackbarContentProps>>, {}, SnackbarOwnerState>;
+    /**
+     * Props applied to the transition element.
+     * By default, the element is based on this [`Transition`](https://reactcommunity.org/react-transition-group/transition/) component.
+     */
+    transition: SlotProps<
+      React.ElementType<TransitionProps>,
+      SnackbarTransitionSlotPropsOverrides,
+      SnackbarOwnerState
+    >;
+  }
+>;
 
 export interface SnackbarOrigin {
   vertical: 'top' | 'bottom';
@@ -14,7 +55,9 @@ export interface SnackbarOrigin {
 
 export type SnackbarCloseReason = 'timeout' | 'clickaway' | 'escapeKeyDown';
 
-export interface SnackbarProps extends StandardProps<React.HTMLAttributes<HTMLDivElement>> {
+export interface SnackbarProps
+  extends Omit<StandardProps<React.HTMLAttributes<HTMLDivElement>>, 'slots' | 'slotProps'>,
+    SnackbarSlotsAndSlotProps {
   /**
    * The action to display. It renders after the message, at the end of the snackbar.
    */
@@ -44,10 +87,12 @@ export interface SnackbarProps extends StandardProps<React.HTMLAttributes<HTMLDi
   classes?: Partial<SnackbarClasses>;
   /**
    * Props applied to the `ClickAwayListener` element.
+   * @deprecated Use `slotProps.clickAwayListener` instead. This prop will be removed in v7. See [Migrating from deprecated APIs](/material-ui/migration/migrating-from-deprecated-apis/) for more details.
    */
   ClickAwayListenerProps?: Partial<ClickAwayListenerProps>;
   /**
    * Props applied to the [`SnackbarContent`](/material-ui/api/snackbar-content/) element.
+   * @deprecated Use `slotProps.content` instead. This prop will be removed in v7. See [Migrating from deprecated APIs](/material-ui/migration/migrating-from-deprecated-apis/) for more details.
    */
   ContentProps?: Partial<SnackbarContentProps>;
   /**
@@ -96,6 +141,7 @@ export interface SnackbarProps extends StandardProps<React.HTMLAttributes<HTMLDi
    * The component used for the transition.
    * [Follow this guide](/material-ui/transitions/#transitioncomponent-prop) to learn more about the requirements for this component.
    * @default Grow
+   * @deprecated Use `slots.transition` instead. This prop will be removed in v7. See [Migrating from deprecated APIs](/material-ui/migration/migrating-from-deprecated-apis/) for more details.
    */
   TransitionComponent?: React.JSXElementConstructor<
     TransitionProps & { children: React.ReactElement<any, any> }
@@ -113,10 +159,12 @@ export interface SnackbarProps extends StandardProps<React.HTMLAttributes<HTMLDi
    * Props applied to the transition element.
    * By default, the element is based on this [`Transition`](https://reactcommunity.org/react-transition-group/transition/) component.
    * @default {}
+   * @deprecated Use `slotProps.transition` instead. This prop will be removed in v7. See [Migrating from deprecated APIs](/material-ui/migration/migrating-from-deprecated-apis/) for more details.
    */
   TransitionProps?: TransitionProps;
 }
 
+export interface SnackbarOwnerState extends SnackbarProps {}
 /**
  *
  * Demos:
