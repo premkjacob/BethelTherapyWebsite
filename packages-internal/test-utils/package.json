@@ -1,21 +1,34 @@
 {
-  "name": "@mui-internal/test-utils",
+  "name": "@mui/internal-test-utils",
   "version": "1.0.0",
-  "private": true,
-  "scripts": {
-    "typescript": "tsc -p tsconfig.json"
-  },
-  "main": "src/index.ts",
+  "author": "MUI Team",
+  "description": "Utilities for MUI tests. This is an internal package not meant for general use.",
+  "main": "./build/index.js",
   "exports": {
-    ".": "./src/index.ts",
-    "./init": "./src/init.js",
-    "./initMatchers": "./src/initMatchers.ts",
-    "./initPlaywrightMatchers": "./src/initPlaywrightMatchers.ts",
-    "./KarmaReporterReactProfiler": "./src/KarmaReporterReactProfiler.js",
-    "./setupBabel": "./src/setupBabel.js",
-    "./setupBabelPlaywright": "./src/setupBabelPlaywright.js",
-    "./setupJSDOM": "./src/setupJSDOM.js",
-    "./setupKarma": "./src/setupKarma.js"
+    ".": "./build/index.js",
+    "./createDescribe": "./build/createDescribe.js",
+    "./createRenderer": "./build/createRenderer.js",
+    "./init": "./build/init.js",
+    "./initMatchers": {
+      "types": "./build/initMatchers.d.ts",
+      "default": "./build/initMatchers.js"
+    },
+    "./initPlaywrightMatchers": {
+      "types": "./build/initPlaywrightMatchers.d.ts",
+      "default": "./build/initPlaywrightMatchers.js"
+    },
+    "./KarmaReporterReactProfiler": "./build/KarmaReporterReactProfiler.js",
+    "./setupBabel": "./build/setupBabel.js",
+    "./setupBabelPlaywright": "./build/setupBabelPlaywright.js",
+    "./setupJSDOM": "./build/setupJSDOM.js",
+    "./setupKarma": "./build/setupKarma.js"
+  },
+  "scripts": {
+    "prebuild": "rimraf ./build",
+    "build": "tsc -b tsconfig.build.json",
+    "typescript": "tsc -b tsconfig.json",
+    "release:publish": "pnpm publish --tag latest",
+    "release:publish:dry-run": "pnpm publish --tag latest --registry=\"http://localhost:4873/\""
   },
   "dependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.24.6",
@@ -56,5 +69,8 @@
   "peerDependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
