@@ -177,6 +177,15 @@ const pages: MuiPage[] = [
         ],
       },
       {
+        pathname: '/material-ui/customization/css-variables',
+        subheader: '/material-ui/customization/css-variables',
+        children: [
+          { pathname: '/material-ui/customization/css-theme-variables/overview' },
+          { pathname: '/material-ui/customization/css-theme-variables/usage' },
+          { pathname: '/material-ui/customization/css-theme-variables/customization' },
+        ],
+      },
+      {
         pathname: '/material-ui/customization/tokens',
         subheader: 'tokens',
         children: [
@@ -238,19 +247,6 @@ const pages: MuiPage[] = [
         pathname: '/material-ui/experimental-api/classname-generator',
         title: 'ClassName generator',
       },
-      {
-        pathname: '/material-ui/experimental-api/css-theme-variables',
-        subheader: 'CSS theme variables',
-        children: [
-          { pathname: '/material-ui/experimental-api/css-theme-variables/overview' },
-          { pathname: '/material-ui/experimental-api/css-theme-variables/usage' },
-          { pathname: '/material-ui/experimental-api/css-theme-variables/customization' },
-          {
-            pathname: '/material-ui/experimental-api/css-theme-variables/migration',
-            title: 'Migrating to CSS variables',
-          },
-        ],
-      },
     ],
   },
   {
@@ -276,6 +272,10 @@ const pages: MuiPage[] = [
           {
             pathname: '/material-ui/migration/migration-v5',
             title: 'Migrating to v6',
+          },
+          {
+            pathname: '/material-ui/migration/migration-css-theme-variables',
+            title: 'Migrating to CSS variables',
           },
         ],
       },
