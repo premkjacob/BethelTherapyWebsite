@@ -18,7 +18,7 @@ export interface OverridableComponent<TypeMap extends OverridableTypeMap> {
        * The component used for the root node.
        * Either a string to use a HTML element or a component.
        */
-      component: RootComponent;
+      component?: RootComponent;
     } & OverrideProps<TypeMap, RootComponent>,
   ): React.JSX.Element | null;
   (props: DefaultComponentProps<TypeMap>): React.JSX.Element | null;

@@ -102,7 +102,7 @@ export interface OverridableComponent<M extends OverridableTypeMap> {
        * The component used for the root node.
        * Either a string to use a HTML element or a component.
        */
-      component: C;
+      component?: C;
     } & OverrideProps<M, C>,
   ): React.JSX.Element | null;
   (props: DefaultComponentProps<M>): React.JSX.Element | null;
