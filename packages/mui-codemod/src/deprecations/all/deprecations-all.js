@@ -17,6 +17,7 @@ import transformCircularProgressClasses from '../circular-progress-classes';
 import transformGridProps from '../grid-props';
 import transformSpeedDialProps from '../speed-dial-props';
 import transformTextFieldProps from '../text-field-props';
+import transformTooltipProps from '../tooltip-props';
 
 /**
  * @param {import('jscodeshift').FileInfo} file
@@ -42,6 +43,7 @@ export default function deprecationsAll(file, api, options) {
   file.source = transformSpeedDialProps(file, api, options);
   file.source = transformTextFieldProps(file, api, options);
   file.source = transformGridProps(file, api, options);
+  file.source = transformTooltipProps(file, api, options);
 
   return file.source;
 }

@@ -1160,6 +1160,43 @@ npx @mui/codemod@next deprecations/popper-props <path>
 npx @mui/codemod@next deprecations/slider-props <path>
 ```
 
+#### `step-connector-classes`
+
+JS transforms:
+
+```diff
+ import { stepConnectorClasses } from '@mui/material/StepConnector';
+
+ MuiStepConnector: {
+   styleOverrides: {
+     root: {
+-      [`& .${stepConnectorClasses.lineHorizontal}`]: {
++      [`&.${stepConnectorClasses.horizontal} > .${stepConnectorClasses.line}`]: {
+         color: 'red',
+        },
+-      [`& .${stepConnectorClasses.lineVertical}`]: {
++      [`&.${stepConnectorClasses.vertical} > .${stepConnectorClasses.line}`]: {
+         color: 'red',
+        },
+     },
+   },
+ },
+```
+
+CSS transforms:
+
+```diff
+-.MuiToggleButtonGroup-root .MuiToggleButtonGroup-groupedHorizontal
++.MuiToggleButtonGroup-root.MuiToggleButtonGroup-horizontal > .MuiToggleButtonGroup-grouped
+-.MuiToggleButtonGroup-root .MuiToggleButtonGroup-groupedVertical
++.MuiToggleButtonGroup-root.MuiToggleButtonGroup-vertical > .MuiToggleButtonGroup-grouped
+ />
+```
+
+```bash
+npx @mui/codemod@latest deprecations/toggle-button-group-classes <path>
+```
+
 #### `tooltip-props`
 
 ```diff
@@ -1182,31 +1219,44 @@ npx @mui/codemod@next deprecations/slider-props <path>
  },
 ```
 
-```bash
-npx @mui/codemod@next deprecations/tooltip-props <path>
+```diff
+ <Tooltip
+-    PopperComponent={CustomPopperComponent}
+-    TransitionComponent={CustomTransitionComponent}
+-    PopperProps={CustomPopperProps}
+-    TransitionProps={CustomTransitionProps}
++    slots={{
++        popper: CustomPopperComponent,
++        transition: CustomTransitionComponent,
++    }}
++    slotProps={{
++        popper: CustomPopperProps,
++        transition: CustomTransitionProps,
++    }}
+ />
 ```
 
-#### `step-connector-classes`
-
-JS transforms:
-
 ```diff
- import { stepConnectorClasses } from '@mui/material/StepConnector';
-
- MuiStepConnector: {
-   styleOverrides: {
-     root: {
--      [`& .${stepConnectorClasses.lineHorizontal}`]: {
-+      [`&.${stepConnectorClasses.horizontal} > .${stepConnectorClasses.line}`]: {
-         color: 'red',
-        },
--      [`& .${stepConnectorClasses.lineVertical}`]: {
-+      [`&.${stepConnectorClasses.vertical} > .${stepConnectorClasses.line}`]: {
-         color: 'red',
-        },
-     },
+ MuiTooltip: {
+   defaultProps: {
+-    PopperComponent: CustomPopperComponent,
+-    TransitionComponent: CustomTransitionComponent,
+-    PopperProps: CustomPopperProps,
+-    TransitionProps: CustomTransitionProps,
++    slots: {
++       popper: CustomPopperComponent,
++       transition: CustomTransitionComponent,
++    },
++    slotProps: {
++       popper: CustomPopperProps,
++       transition: CustomTransitionProps,
++    },
    },
  },
+```
+
+```bash
+npx @mui/codemod@next deprecations/tooltip-props <path>
 ```
 
 #### `step-label-props`
